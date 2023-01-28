@@ -98,37 +98,6 @@ class File_upload
         $this->default_vars();      
     }
 
-    function __destruct() {
-        // clear tmp dir
-        if ($this->del_files_in_dir($this->tmp_dir, true)) {
-            $this->message .= '$this->tmp_dir "'.$this->tmp_dir.'" has been cleared.<br />';
-        }
-    }
-
-    public function del_files_in_dir(string $dir, bool $recursive = true) {
-        if (!is_readable($dir)) {
-            $this->error = 'ERROR!<br />Not unlink files in tmp dir, because dir is not readable "'.$dir.'".<br />';
-            return false;
-        }
-        $files = array_diff(scandir($dir), array('.','..'));
-        foreach ($files as $file) {
-          if (is_dir($dir.DIRECTORY_SEPARATOR.$file) && $recursive === true) {
-            $this->del_files_in_dir($dir.DIRECTORY_SEPARATOR.$file, true);
-          } else {
-            if (!unlink($dir.DIRECTORY_SEPARATOR.$file)) {
-                $this->error = 'ERROR!<br />Not unlink "'.$dir/$file.'".<br />';
-                return false;
-            } else {
-              return true;
-            }
-          }
-        }
-    }
-
-    public function isset_data() {
-        return (is_array($this->files) && !empty($this->files)) ? true : false;
-    }
-
     public function default_vars() {
         //declaring variables
         $this->phpFileUploadErrors = array(
@@ -175,11 +144,21 @@ class File_upload
         $this->processing = [];
     }
 
+    public function isset_data() {
+        return (is_array($this->files) && !empty($this->files)) ? true : false;
+    }
+
     public function execute($input_array, $key, $file) {
-        //check input data
+        //checking the variables set by the user dest dir and tmp dir
         if (empty($this->dest_dir)) {
             $this->error = 'ERROR!<br />'. $this->errors[0] .'<br />';
             return false;
+        } else {
+            // del ending lash in dir
+            $this->dest_dir = rtrim($this->dest_dir, DIRECTORY_SEPARATOR);
+            if (!empty($this->tmp_dir)) {
+                $this->tmp_dir = rtrim($this->tmp_dir, DIRECTORY_SEPARATOR);
+            }
         }
         //check error in FILES
         if ($file['error'] !== 0 && $file['error'] !== '0' && $file['error'] !== 'UPLOAD_ERR_OK') {
@@ -214,25 +193,46 @@ class File_upload
         // move_upload
         if ($this->move_upload($file['tmp_name']) === false ) {
             return false;
-        }
+        } 
         // check_processing
-        if ($this->check_processing() === false ) {
-            return false;
+        if ($this->check_processing()) {
+            // img_proc
+            if ($this->img_proc() === false ) {
+                return false;
+            }
         }
-        // img_proc
-        /*
-        if ($this->img_proc() === false ) {
-            return false;
-        }
-*/
         return true;
+    }
+   /**
+     * delete all files into directory
+     * @return bool
+     */
+    public function del_files_in_dir(string $dir, bool $recursive = true) {
+        $dir = rtrim($dir, DIRECTORY_SEPARATOR);
+        if (!is_readable($dir)) {
+            $this->error = 'ERROR!<br />Not unlink files in tmp dir, because dir is not readable "'.$dir.'".<br />';
+            return false;
+        }
+        $files = array_diff(scandir($dir), array('.','..'));
+        foreach ($files as $file) {
+          if (is_dir($dir.DIRECTORY_SEPARATOR.$file) && $recursive === true) {
+            $this->del_files_in_dir($dir.DIRECTORY_SEPARATOR.$file, true);
+          } else {
+            if (!unlink($dir.DIRECTORY_SEPARATOR.$file)) {
+                $this->error = 'ERROR!<br />Not unlink "'.$dir/$file.'".<br />';
+                return false;
+            } else {
+              return true;
+            }
+          }
+        }
     }
     /**
      * use class \Fiup\Imageresize\Imageresize
      * @return bool
      */
     public function img_proc() {
-        $file = $this->tmp_dir.$this->new_file_name;
+        $file = $this->tmp_dir.DIRECTORY_SEPARATOR.$this->new_file_name;
         try{
             $imageresize = new \Fiup\Imageresize\Imageresize($file);
             foreach ($this->processing as $method => $value) {
@@ -249,10 +249,11 @@ class File_upload
                 }
             }
             $imageresize->save($this->dest_dir.DIRECTORY_SEPARATOR.$this->new_file_name);
+            chmod($this->dest_dir.DIRECTORY_SEPARATOR.$this->new_file_name , $this->file_permissions);
             $this->message .= 'SUCCES!<br />File has been processed and copied to <br />"'.$this->dest_dir.DIRECTORY_SEPARATOR.$this->new_file_name.'".<br />';
             return true;
         } catch (\Fiup\Imageresize\Imageresizeexception $e) {
-            $this->error = "ERROR!<br />Something went wrong" . $e->getMessage();
+            $this->error = "ERROR!<br />Something went wrong.<br />" . $e->getMessage();
             return false;
         }
     }
@@ -269,21 +270,21 @@ class File_upload
      */
 
     protected function move_upload($file_tmp_name) {
-        if ( empty($this->tmp_dir) ) {
-            if ( !$this->check_processing() ) { 
+        if ( !$this->check_processing() ) { 
+            if ( empty($this->tmp_dir) ) {
                 $this->tmp_dir = $this->dest_dir.DIRECTORY_SEPARATOR;
             } 
         } 
-        if ( $this->check_or_create_dir($this->dest_dir, $this->dir_permissions, $this->create_dir) ) {
-            if (move_uploaded_file($file_tmp_name, $this->tmp_dir.$this->new_file_name)) {
-                chmod($this->tmp_dir.$this->new_file_name , $this->file_permissions);
-                $this->message = 'File is uploaded to: "'.$this->tmp_dir.$this->new_file_name.'".<br />'; 
-                return true;
-            } else {
-                $this->error = 'ERROR!<br />'.$this->errors[15] .'<br />';
-                return false;
-            }
+        if ( $this->check_or_create_dir($this->dest_dir, $this->dir_permissions, $this->create_dir) === false ) {
+            return false;
+        }
+
+        if (move_uploaded_file($file_tmp_name, $this->tmp_dir.DIRECTORY_SEPARATOR.$this->new_file_name)) {
+            chmod($this->tmp_dir.DIRECTORY_SEPARATOR.$this->new_file_name , $this->file_permissions);
+            $this->message .= 'File is uploaded to: "'.$this->tmp_dir.DIRECTORY_SEPARATOR.$this->new_file_name.'".<br />'; 
+            return true;
         } else {
+            $this->error = 'ERROR!<br />'.$this->errors[15] .'<br />';
             return false;
         }
     }
