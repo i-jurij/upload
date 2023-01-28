@@ -108,8 +108,6 @@ Working example (index.php in the same folder as class folder) :
 </head>
 <body style="width:100%;">
 <?php
-define ('APPROOT', __DIR__);
-//Loading Libraries
 spl_autoload_extensions(".php"); // comma-separated list
 spl_autoload_register();
 
