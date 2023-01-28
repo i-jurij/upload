@@ -86,9 +86,6 @@ check_processing: check if isset array $this->processing and this is associative
 
 img_proc processing file of image
 ```
-```
-this __destruct clear tmp folder;
-```
 ____
 
 ```
