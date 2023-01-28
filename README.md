@@ -15,6 +15,9 @@ $this->files = ['input_name_for_single_upload' =>
 ]
 ```
 ```
+$this->isset_data(): check if $this->files not empty (this means in $_FILES is also not empty)
+```
+```
 therefore, after creating an instance of the class 
 and checking the existence of the input data, 
 there are always two foreach, and then 
@@ -52,9 +55,6 @@ continue;
 }
 }
 }
-```
-```
-$this->isset_data(): check if $this->files not empty (this means in $_FILES is also not empty)
 ```
 ```
 $this->execute():
