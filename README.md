@@ -56,18 +56,33 @@ $this->isset_data(): check if $this->files not empty (this means in $_FILES is a
 ```
 ```
 $this->execute():
+
 check input data: $this->dest_dir required
+
 check error: in FILES
-check_dest_dir: $this->create_dir default false, $this->dir_permissions default 0755;
-check_file_size: if user not set $this->file_size - default 1024000B (1MB), set in bytes eg 2*100*1024 (200KB)
+
+check_dest_dir: $this->create_dir default false,
+$this->dir_permissions default 0755;
+
+check_file_size: if user not set $this->file_size - default 1024000B (1MB), 
+set in bytes eg 2*100*1024 (200KB)
+
 check_mime_type: if user not set $this->file_mimetype -default any, 
 string or array, 'audio' or ['image/bmp', 'audio', 'video'],
 if user set full mimetype eg imge/bmp - the class also check the extension
-check_extension: if user not set $this->file_ext -default any, string or array, eg 'jpg', ['.png', '.webp', 'jpeg']
-check_new_file_name: use $this->translit_ostslav_to_lat, for other - replace with $this->translit_to_lat
-move_upload: upload file to dir (dir = tmp dir if user set $this->processing or $this->tmp_dir, else - dir = dest dir)
+
+check_extension: if user not set $this->file_ext -default any, 
+string or array, eg 'jpg', ['.png', '.webp', 'jpeg']
+
+check_new_file_name: use $this->translit_ostslav_to_lat, 
+for other - replace with $this->translit_to_lat
+
+move_upload: upload file to dir (dir = tmp dir if user set $this->processing 
+or $this->tmp_dir, else - dir = dest dir)
+
 check_processing: check if isset array $this->processing and this is associative and not empty
-img_proc
+
+img_proc processing file of image
 ```
 ```
 this __destruct clear tmp folder;
