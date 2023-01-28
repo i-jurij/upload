@@ -1,14 +1,20 @@
+```
 Only for single or multiple file uploads in next format: 
 A) <input type="file" name="name" > or 
 B) <input type="file" name="names[]" >
-
+```
+```
 $this __construct normalize $_ FILES_array:
+```
+```
 $this->files = ['input_name_for_single_upload' => 
 [   0 => ['name', 'full_path', 'type', 'tmp_name', 'error', 'size'] ],
 'input_name_for multiple_uploads' =>
 [   0 => ['name', 'full_path', 'type', 'tmp_name', 'error', 'size'],
 1 => ['name', 'full_path', 'type', 'tmp_name', 'error', 'size'] ]
 ]
+```
+```
 therefore, after creating an instance of the class and checking the existence of the input data, 
 there are always two foreach, and then $this->execute($input, $key, $file)
 
@@ -44,9 +50,11 @@ continue;
 }
 }
 }
-
+```
+```
 $this->isset_data(): check if $this->files not empty (this means in $_FILES is also not empty)
-
+```
+```
 $this->execute():
 check input data: $this->dest_dir required
 check error: in FILES
@@ -60,10 +68,13 @@ check_new_file_name: use $this->translit_ostslav_to_lat, for other - replace wit
 move_upload: upload file to dir (dir = tmp dir if user set $this->processing or $this->tmp_dir, else - dir = dest dir)
 check_processing: check if isset array $this->processing and this is associative and not empty
 img_proc
-
+```
+```
 this __destruct clear tmp folder;
+```
+____
 
-
+```
 Working example (index.php in the same folder as class folder) :
 
 <!DOCTYPE html>
@@ -196,3 +207,4 @@ if (file_put_contents('README.md', $lines)) {
 ?>
 </body>
 </html>
+```
