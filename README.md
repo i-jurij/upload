@@ -15,8 +15,10 @@ $this->files = ['input_name_for_single_upload' =>
 ]
 ```
 ```
-therefore, after creating an instance of the class and checking the existence of the input data, 
-there are always two foreach, and then $this->execute($input, $key, $file)
+therefore, after creating an instance of the class 
+and checking the existence of the input data, 
+there are always two foreach, and then 
+$this->execute($input, $key, $file)
 
 eg
 <?php
