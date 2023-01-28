@@ -113,16 +113,6 @@ if ($load->isset_data()) {
 	    </div>
   	</form>
 <?php
-$lines = file('README.md');
-// Осуществим проход массива и выведем содержимое в виде HTML-кода вместе с номерами строк.
-foreach ($lines as $line_num => $line) {
-    $lines[$line_num] = ltrim($line, '* ');
-}
-if (file_put_contents('README.md', $lines)) {
-	print 'yes';
-} else {
-	print 'no';
-}
 
 }
 ?>

@@ -104,6 +104,7 @@ class File_upload
             $this->message .= '$this->tmp_dir "'.$this->tmp_dir.'" has been cleared.<br />';
         }
     }
+
     public function del_files_in_dir(string $dir, bool $recursive = true) {
         if (!is_readable($dir)) {
             $this->error = 'ERROR!<br />Not unlink files in tmp dir, because dir is not readable "'.$dir.'".<br />';
@@ -123,9 +124,11 @@ class File_upload
           }
         }
     }
+
     public function isset_data() {
         return (is_array($this->files) && !empty($this->files)) ? true : false;
     }
+
     public function default_vars() {
         //declaring variables
         $this->phpFileUploadErrors = array(
@@ -217,10 +220,11 @@ class File_upload
             return false;
         }
         // img_proc
+        /*
         if ($this->img_proc() === false ) {
             return false;
         }
-
+*/
         return true;
     }
     /**
@@ -252,6 +256,7 @@ class File_upload
             return false;
         }
     }
+
     function count_parameters_of_method($class, $method)
     {
         $action_method_relfection = new \ReflectionMethod($class, $method);
@@ -262,6 +267,7 @@ class File_upload
      * @param string $file_tmp_name (from $_FILES['tmp_name])
      * @return bool
      */
+
     protected function move_upload($file_tmp_name) {
         if ( empty($this->tmp_dir) ) {
             if ( !$this->check_processing() ) { 
