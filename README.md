@@ -110,17 +110,6 @@ Working example (index.php in the same folder as class folder) :
 <?php
 define ('APPROOT', __DIR__);
 //Loading Libraries
-/*	  	
-spl_autoload_register(function($className){
-if (file_exists(APPROOT.DIRECTORY_SEPARATOR.'app/'.mb_strtolower($className).'.php')) {
-require_once APPROOT.DIRECTORY_SEPARATOR.'app/'.mb_strtolower($className).'.php';
-}
-elseif (file_exists(APPROOT.DIRECTORY_SEPARATOR.'app/traits/'.mb_strtolower($className).'.php')) {
-require_once APPROOT.DIRECTORY_SEPARATOR.'app/traits/'.mb_strtolower($className).'.php';
-}
-});
-/			
-
 spl_autoload_extensions(".php"); // comma-separated list
 spl_autoload_register();
 
