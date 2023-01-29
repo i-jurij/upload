@@ -208,23 +208,25 @@ class File_upload
      * @return bool
      */
     public function del_files_in_dir(string $dir, bool $recursive = true) {
-        $dir = rtrim($dir, DIRECTORY_SEPARATOR);
-        if (!is_readable($dir)) {
-            $this->error = 'ERROR!<br />Not unlink files in tmp dir, because dir is not readable "'.$dir.'".<br />';
-            return false;
-        }
-        $files = array_diff(scandir($dir), array('.','..'));
-        foreach ($files as $file) {
-          if (is_dir($dir.DIRECTORY_SEPARATOR.$file) && $recursive === true) {
-            $this->del_files_in_dir($dir.DIRECTORY_SEPARATOR.$file, true);
-          } else {
-            if (!unlink($dir.DIRECTORY_SEPARATOR.$file)) {
-                $this->error = 'ERROR!<br />Not unlink "'.$dir/$file.'".<br />';
+        if (!empty($dir)) {
+            $dir = rtrim($dir, DIRECTORY_SEPARATOR);
+            if (!is_readable($dir)) {
+                $this->error = 'ERROR!<br />Not unlink files in tmp dir, because dir is not readable "'.$dir.'".<br />';
                 return false;
-            } else {
-              return true;
             }
-          }
+            $files = array_diff(scandir($dir), array('.','..'));
+            foreach ($files as $file) {
+              if (is_dir($dir.DIRECTORY_SEPARATOR.$file) && $recursive === true) {
+                $this->del_files_in_dir($dir.DIRECTORY_SEPARATOR.$file, true);
+              } else {
+                if (!unlink($dir.DIRECTORY_SEPARATOR.$file)) {
+                    $this->error = 'ERROR!<br />Not unlink "'.$dir/$file.'".<br />';
+                    return false;
+                } else {
+                  return true;
+                }
+              }
+            }
         }
     }
     /**
@@ -270,18 +272,19 @@ class File_upload
      */
 
     protected function move_upload($file_tmp_name) {
+        $dir = $this->tmp_dir;
         if ( !$this->check_processing() ) { 
             if ( empty($this->tmp_dir) ) {
-                $this->tmp_dir = $this->dest_dir.DIRECTORY_SEPARATOR;
+                $dir = $this->dest_dir.DIRECTORY_SEPARATOR;
             } 
-        } 
-        if ( $this->check_or_create_dir($this->dest_dir, $this->dir_permissions, $this->create_dir) === false ) {
+        }
+        if ( $this->check_or_create_dir($dir, $this->dir_permissions, $this->create_dir) === false ) {
             return false;
         }
 
-        if (move_uploaded_file($file_tmp_name, $this->tmp_dir.DIRECTORY_SEPARATOR.$this->new_file_name)) {
-            chmod($this->tmp_dir.DIRECTORY_SEPARATOR.$this->new_file_name , $this->file_permissions);
-            $this->message .= 'File is uploaded to: "'.$this->tmp_dir.DIRECTORY_SEPARATOR.$this->new_file_name.'".<br />'; 
+        if (move_uploaded_file($file_tmp_name, $dir.DIRECTORY_SEPARATOR.$this->new_file_name)) {
+            chmod($dir.DIRECTORY_SEPARATOR.$this->new_file_name , $this->file_permissions);
+            $this->message .= 'File is uploaded to: "'.$dir.DIRECTORY_SEPARATOR.$this->new_file_name.'".<br />'; 
             return true;
         } else {
             $this->error = 'ERROR!<br />'.$this->errors[15] .'<br />';
