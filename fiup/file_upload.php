@@ -1,4 +1,6 @@
 <?php
+//Copyright © 2023 I-Jurij (ijurij@gmail.com)
+//Licensed under the Apache License, Version 2.0
 /**
  * Only for single or multiple file uploads in next format: 
  * A) <input type="file" name="name" > or 
@@ -853,5 +855,6 @@ class File_upload
         return $normalized_array;
     }
 }
-
+//Copyright © 2023 I-Jurij (ijurij@gmail.com)
+//Licensed under the Apache License, Version 2.0
 ?>
