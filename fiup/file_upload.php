@@ -2,45 +2,45 @@
 //Copyright © 2023 I-Jurij (ijurij@gmail.com)
 //Licensed under the Apache License, Version 2.0
 /**
- * Only for single or multiple file uploads in next format: 
- * A) <input type="file" name="name" > or 
+ * Only for single or multiple file uploads in next format:
+ * A) <input type="file" name="name" > or
  * B) <input type="file" name="names[]" >
- * 
+ *
  * $this __construct normalize $_ FILES_array:
- * $this->files = ['input_name_for_single_upload' => 
+ * $this->files = ['input_name_for_single_upload' =>
  *                      [ 0 => ['name', 'full_path', 'type', 'tmp_name', 'error', 'size'] ],
  *                  'input_name_for multiple_uploads' =>
  *                      [ 0 => ['name', 'full_path', 'type', 'tmp_name', 'error', 'size'],
  *                        1 => ['name', 'full_path', 'type', 'tmp_name', 'error', 'size'] ]
  *                ]
- * therefore, after creating an instance of the class 
- * and checking the existence of the input data, 
- * there are always two foreach, 
+ * therefore, after creating an instance of the class
+ * and checking the existence of the input data,
+ * there are always two foreach,
  * and then $this->execute($input, $key, $file)
- * 
+ *
  * eg
- * $upload = new FIUP\File_upload; 
- * if ($upload->isset_data()) 
+ * $upload = new FIUP\File_upload;
+ * if ($upload->isset_data())
  * {
- *  foreach ($load->files as $input => $input_array) 
+ *  foreach ($load->files as $input => $input_array)
  *  {
  *      print 'Input "'.$input.'":<br />';
  *      // SET the vars for class
- *      if ($input === 'file') 
+ *      if ($input === 'file')
  *      {
- *          $upload->propeties = ''; 
+ *          $upload->propeties = '';
  *      }
- *      foreach ($input_array as $key => $file) 
+ *      foreach ($input_array as $key => $file)
  *      {
  *          print 'Name "'.$file['name'].'":<br />';
  *          // PROCESSING DATA
- *          if ($load->execute($input, $key, $file) && !empty($load->message)) 
+ *          if ($load->execute($input, $key, $file) && !empty($load->message))
  *          {
  *              print $load->message; print '<br />';
- *          } 
- *          else 
+ *          }
+ *          else
  *          {
- *              if (!empty($load->error)) 
+ *              if (!empty($load->error))
  *              {
  *                  print $load->error; print '<br />';
  *              }
@@ -49,15 +49,15 @@
  *      }
  *   }
  * }
- * 
+ *
  * $this->isset_data(): check if $this->files not empty (this means in $_FILES is also not empty)
- * 
+ *
  * $this->execute():
  * check input data: dest_dir required
  * check error: in FILES
  * check_dest_dir: $this->create_dir default false, $this->dir_permissions default 0755;
  * check_file_size: if user not set $this->file_size - default 1024000B (1MB), set in bytes eg 2*100*1024 (200KB)
- * check_mime_type: if user not set $this->file_mimetype -default any, 
+ * check_mime_type: if user not set $this->file_mimetype -default any,
  *      string or array, 'audio' or ['image/bmp', 'audio', 'video'],
  *      if user set full mimetype eg imge/bmp - the class also check the extension
  * check_extension: if user not set $this->file_ext -default any, string or array, eg 'jpg', ['.png', '.webp', 'jpeg']
@@ -65,9 +65,9 @@
  * move_upload: upload file to dir (dir = tmp dir if user set $this->processing or $this->tmp_dir, else - dir = dest dir)
  * check_processing: check if isset array $this->processing and this is associative and not empty
  * img_proc
- * 
+ *
  * this __destruct clear tmp folder;
- * 
+ *
  */
 
 namespace Fiup;
@@ -93,11 +93,11 @@ class File_upload
     public string $error;
     protected array $errors;
     protected string $name;
-    
+
 
     function __construct() {
-        $this->files = self::normalize_files_array();  
-        $this->default_vars();      
+        $this->files = self::normalize_files_array();
+        $this->default_vars();
     }
 
     public function default_vars() {
@@ -187,7 +187,7 @@ class File_upload
         if ($this->check_extension($file['name'], $file['tmp_name']) === false ) {
             return false;
         }
-        
+
         // check_new_file_name
         if ($this->check_new_file_name($input_array, $key, $file) === false ) {
             return false;
@@ -195,7 +195,7 @@ class File_upload
         // move_upload
         if ($this->move_upload($file['tmp_name']) === false ) {
             return false;
-        } 
+        }
         // check_processing
         if ($this->check_processing()) {
             // img_proc
@@ -254,7 +254,7 @@ class File_upload
             }
             $imageresize->save($this->dest_dir.DIRECTORY_SEPARATOR.$this->new_file_name);
             chmod($this->dest_dir.DIRECTORY_SEPARATOR.$this->new_file_name , $this->file_permissions);
-            $this->message .= 'SUCCES!<br />File has been processed and copied to <br />"'.$this->dest_dir.DIRECTORY_SEPARATOR.$this->new_file_name.'".<br />';
+            $this->message .= 'SUCCESS!<br />File has been processed and copied to <br />"'.$this->dest_dir.DIRECTORY_SEPARATOR.$this->new_file_name.'".<br />';
             return true;
         } catch (\Fiup\Imageresize\Imageresizeexception $e) {
             $this->error = "ERROR!<br />Something went wrong.<br />" . $e->getMessage();
@@ -275,10 +275,10 @@ class File_upload
 
     protected function move_upload($file_tmp_name) {
         $dir = $this->tmp_dir;
-        if ( !$this->check_processing() ) { 
+        if ( !$this->check_processing() ) {
             if ( empty($this->tmp_dir) ) {
                 $dir = $this->dest_dir.DIRECTORY_SEPARATOR;
-            } 
+            }
         }
         if ( $this->check_or_create_dir($dir, $this->dir_permissions, $this->create_dir) === false ) {
             return false;
@@ -286,7 +286,7 @@ class File_upload
 
         if (move_uploaded_file($file_tmp_name, $dir.DIRECTORY_SEPARATOR.$this->new_file_name)) {
             chmod($dir.DIRECTORY_SEPARATOR.$this->new_file_name , $this->file_permissions);
-            $this->message .= 'File is uploaded to: "'.$dir.DIRECTORY_SEPARATOR.$this->new_file_name.'".<br />'; 
+            $this->message .= 'File is uploaded to: "'.$dir.DIRECTORY_SEPARATOR.$this->new_file_name.'".<br />';
             return true;
         } else {
             $this->error = 'ERROR!<br />'.$this->errors[15] .'<br />';
@@ -300,7 +300,7 @@ class File_upload
     protected function check_processing() {
         if (empty($this->processing)) {
             return false;
-        } else { 
+        } else {
             if ( is_array($this->processing) && $this->isAssoc($this->processing) &&!empty($this->processing) ) {
                 return true;
             } else {
@@ -326,10 +326,10 @@ class File_upload
             $new_name = $this->name.$this->get_point_ext($file['name']);
             if (file_exists($this->dest_dir.DIRECTORY_SEPARATOR.$new_name)) {
                 if ($this->replace_old_file) {
-                    $this->new_file_name = $new_name; 
+                    $this->new_file_name = $new_name;
                     return true;
                 } else {
-                    $this->error = 'ERROR!<br /> 
+                    $this->error = 'ERROR!<br />
                                         Change $this->new_file_name for upload class in model or set $this->replace_old_file = true,<br />
                                         because '. $this->errors[14] .'<br />
                                         File: "'.$new_name.'", dir: "'.$this->dest_dir.'".<br />';
@@ -402,7 +402,7 @@ class File_upload
      * @param string $var
      * @return string or false
      */
-    public function sanitize_string($var) 
+    public function sanitize_string($var)
     {
         if (is_string($var) && !empty($var)) {
             // remove HTML tags
@@ -747,7 +747,7 @@ class File_upload
 			finfo_close($finfo);
 		} elseif (function_exists('mime_content_type')) {
 			$mtype = mime_content_type($file);
-		} 
+		}
 		return $mtype;
 	}
     /**
