@@ -82,7 +82,7 @@ class File_upload
     public int $file_size;
     public $file_mimetype;
     public $file_ext;
-    public string $new_file_name;
+    public $new_file_name; //string or array ['filename, 'noindex'] - where noindex for input with multiple uploads (but you must get different name for file)
     public bool $replace_old_file;
     public string $tmp_dir;
     public array $processing;
