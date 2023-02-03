@@ -365,8 +365,15 @@ class File_upload
                 return true;
         } else {
             if (count($input_array) > 1) {
-                $this->name = pathinfo($key.'_'.$this->sanitize_string($this->translit_ostslav_to_lat($this->new_file_name)), PATHINFO_FILENAME);
-                return true;
+                if (is_array($this->new_file_name) && $this->new_file_name[1] === 'noindex') {
+                    $name = $this->sanitize_string($this->translit_ostslav_to_lat($this->new_file_name));
+                    //del path and ext from name, if user set them by mistake
+                    $this->name = pathinfo($name, PATHINFO_FILENAME);
+                    return true;
+                } else {
+                    $this->name = pathinfo($key.'_'.$this->sanitize_string($this->translit_ostslav_to_lat($this->new_file_name)), PATHINFO_FILENAME);
+                    return true;
+                }
             } else {
                 $name = $this->sanitize_string($this->translit_ostslav_to_lat($this->new_file_name));
                 //del path and ext from name, if user set them by mistake
