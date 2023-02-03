@@ -149,7 +149,8 @@ if ($load->isset_data()) {
 				$load->file_permissions = 0666; // permissions for the file being created
 				$load->file_mimetype = ['text/php', 'text/x-php', 'text/html']; // allowed mime-types for upload file
 				$load->file_ext = ['.php', 'html']; // allowed extension for upload file
-				$load->new_file_name = ''; // new name of upload file
+				$load->new_file_name = ''; // new name of upload file, string 'filename' or array ['filename, 'noindex'] - 
+											where noindex for input with multiple uploads (but you must get different name for file)
 				$load->replace_old_file = false; // replace old file in dest dir with new upload file with same name
 				$load->processing = []; // method and parameters for class imageresize
 			}
