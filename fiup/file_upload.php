@@ -366,7 +366,7 @@ class File_upload
         } else {
             if (count($input_array) > 1) {
                 if (is_array($this->new_file_name) && $this->new_file_name[1] === 'noindex') {
-                    $name = $this->sanitize_string($this->translit_ostslav_to_lat($this->new_file_name));
+                    $name = $this->sanitize_string($this->translit_ostslav_to_lat($this->new_file_name[0]));
                     //del path and ext from name, if user set them by mistake
                     $this->name = pathinfo($name, PATHINFO_FILENAME);
                     return true;
