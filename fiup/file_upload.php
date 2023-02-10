@@ -365,22 +365,25 @@ class File_upload
                 return true;
         } else {
             if (count($input_array) > 1) {
-                if (is_array($this->new_file_name)) {
-                    $prename = (!empty($this->new_file_name[0])) ? (string) $this->new_file_name[0] : $path_parts['filename'];
-                    if ($this->new_file_name[1] === 'noindex' or $this->new_file_name[1] === false) {
-                        $name = $prename;
-                    } elseif ($this->new_file_name[1] === 'index' or $this->new_file_name[1] === true) {
-                        $name = $key.'_'.$prename;
-                    }
-                } else {
-                    $name = $key.'_'. (string) $this->new_file_name;
+                if ($this->new_file_name[1] === 'noindex' or $this->new_file_name[1] === false) {
+                    $name = $this->name0($path_parts);
+                } elseif ($this->new_file_name[1] === 'index' or $this->new_file_name[1] === true) {
+                    $name = $key.'_'.$this->name0($path_parts);
                 }
             } else {
-                $name = (string) $this->new_file_name;
+                $name = $this->name0($path_parts);
             }
             $this->name = pathinfo($this->sanitize_string($this->translit_ostslav_to_lat($name)), PATHINFO_FILENAME);
             return true;
         }
+    }
+    protected function name0($path_parts) {
+        if (is_array($this->new_file_name)) {
+            $prename = (!empty($this->new_file_name[0])) ? $this->new_file_name[0] : $path_parts['filename'];
+        } else {
+            $prename = $this->new_file_name;
+        }
+        return $prename;
     }
     /**
      * replaces all Cyrillic letters with Latin
