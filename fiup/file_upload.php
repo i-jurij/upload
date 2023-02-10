@@ -323,7 +323,14 @@ class File_upload
      */
     protected function check_new_file_name($input_array, $key, $file) {
         if ($this->new_name($input_array, $key, $file)) {
-            $new_name = $this->name.$this->get_point_ext($file['name']);
+            // wrap aroung jpeg -> jpg
+            if ($this->get_point_ext($file['name']) === '.jpeg') {
+                $ext = '.jpg';
+            } else {
+                $ext = $this->get_point_ext($file['name']);
+            }
+            $new_name = $this->name.$ext;
+            //$new_name = $this->name.$this->get_point_ext($file['name']);
             if (file_exists($this->dest_dir.DIRECTORY_SEPARATOR.$new_name)) {
                 if ($this->replace_old_file) {
                     $this->new_file_name = $new_name;
