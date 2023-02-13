@@ -722,6 +722,7 @@ class File_upload
             'audio/wav'                                                                 => 'wav',
             'application/wbxml'                                                         => 'wbxml',
             'video/webm'                                                                => 'webm',
+            'image/webp'                                                                => 'webp',
             'audio/x-ms-wma'                                                            => 'wma',
             'application/wmlc'                                                          => 'wmlc',
             'video/x-ms-wmv'                                                            => 'wmv',
